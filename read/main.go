@@ -64,6 +64,8 @@ func newPost(postFile io.Reader) (Post, error) {
 
 	// ignore a line for the seperator
 	scanner.Scan()
+	scanner.Scan()
+	scanner.Scan()
 
 	buf := bytes.Buffer{}
 	for scanner.Scan() {

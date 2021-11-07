@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-	log.Println(os.DirFS("posts"))
 	posts, err := blogposts.NewPostsFromFS(os.DirFS("posts"))
 
 	if err != nil {
@@ -15,7 +14,7 @@ func main() {
 	}
 
 	for _, s := range posts {
-		log.Printf("Title: %v, Description: %v, Tags: %v, Body: %v",
+		log.Printf("Title: %v, \nDescription: %v, \nTags: %v, \nBody: %v",
 				s.Title, s.Description, s.Tags, s.Body)
 	}
 
