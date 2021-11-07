@@ -1,15 +1,28 @@
 package blogposts
 
 import (
-	"io/fs"
+	"bufio"
 	"io"
+	"fmt"
+	"bytes"
+	"io/fs"
+	"strings"
 )
 
 type Post struct {
 	Title string
+	Description string
+	Tags []string
+	Body string
 }
 
-func NewPostsFromFS(fileSystem fs.FS) ([]Post , error){
+const (
+	titleSeperator       = "Title: "
+	descriptionSeperator = "Description: "
+	tagSeperator				 = "Tags: "
+)
+
+func NewPostsFromFS(fileSystem fs.FS) ([]Post, error) {
 	dir, err := fs.ReadDir(fileSystem, ".")
 	var posts []Post
 
@@ -38,11 +51,26 @@ func getPost(fileSystem fs.FS, fileName string) (Post, error) {
 }
 
 func newPost(postFile io.Reader) (Post, error) {
-	postData, err := io.ReadAll(postFile)
-	if err != nil {
-		return Post{}, err
+	scanner := bufio.NewScanner(postFile)
+
+	readLine := func() string {
+		scanner.Scan()
+		return scanner.Text()
 	}
 
-	post := Post{Title: string(postData)[7:]}
+	title := readLine()[len(titleSeperator):]
+	description := readLine()[len(descriptionSeperator):]
+	tags := strings.Split(readLine()[len(tagSeperator):], ", ")
+
+	// ignore a line for the seperator
+	scanner.Scan()
+
+	buf := bytes.Buffer{}
+	for scanner.Scan() {
+		fmt.Fprintln(&buf, scanner.Text())
+	}
+	body := strings.TrimSuffix(buf.String(), "\n")
+
+	post := Post{Title: title, Description: description, Tags: tags, Body: body}
 	return post, nil
 }
