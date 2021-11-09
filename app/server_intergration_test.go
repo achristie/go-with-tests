@@ -1,14 +1,14 @@
 package main
 
 import (
-	"testing"
-	"net/http/httptest"
 	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
 func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	store := NewInMemoryPlayerStore()
-	server := PlayerServer{store}
+	server := NewPlayerServer( store )
 	player := "Pepper"
 
 	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))

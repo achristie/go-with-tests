@@ -18,13 +18,11 @@ func (i *InMemoryPlayerStore) GetPlayerScore(name string) int {
 }
 
 func (i *InMemoryPlayerStore) RecordWin(name string) {
-	log.Println(name)
-	log.Println(i)
 	i.store[name]++
 }
 
 func main() {
-	server := &PlayerServer{NewInMemoryPlayerStore()}
+	server := NewPlayerServer(NewInMemoryPlayerStore())
 
 	log.Fatal(http.ListenAndServe(":5000", server))
 }
