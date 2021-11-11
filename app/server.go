@@ -14,7 +14,7 @@ type PlayerStore interface {
 }
 
 type PlayerServer struct {
-	store  PlayerStore
+	store PlayerStore
 	http.Handler
 }
 

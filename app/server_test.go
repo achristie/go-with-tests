@@ -1,19 +1,18 @@
 package main
 
 import (
-	"io"
-	"reflect"
-	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 )
 
 type StubPlayerStore struct {
 	scores   map[string]int
 	winCalls []string
-	league []Player
+	league   []Player
 }
 
 func (s *StubPlayerStore) GetPlayerScore(name string) int {
@@ -35,7 +34,7 @@ func TestStoreWins(t *testing.T) {
 		nil,
 		nil,
 	}
-	server := NewPlayerServer( &store )
+	server := NewPlayerServer(&store)
 
 	t.Run("it records win when POST", func(t *testing.T) {
 		player := "Pepper"
@@ -71,7 +70,7 @@ func TestGETPlayers(t *testing.T) {
 		nil,
 		nil,
 	}
-	server := NewPlayerServer( &store )
+	server := NewPlayerServer(&store)
 
 	t.Run("returns Pepper's score", func(t *testing.T) {
 		request := newGetScoreRequest("Pepper")
@@ -112,7 +111,7 @@ func TestLeague(t *testing.T) {
 			{"Andy", 35},
 		}
 		store := StubPlayerStore{nil, nil, wantedLeague}
-		server := NewPlayerServer( &store )
+		server := NewPlayerServer(&store)
 
 		request := newLeagueRequest()
 		response := httptest.NewRecorder()
@@ -133,12 +132,12 @@ func TestLeague(t *testing.T) {
 func getLeagueFromResponse(t testing.TB, body io.Reader) (league []Player) {
 	t.Helper()
 
-		err := json.NewDecoder(body).Decode(&league)
-		if err != nil {
-			t.Fatalf("Unable to parse response from server %q into slice of Player, '%v'", body, err)
-		}
+	league, err := NewLeague(body)
+	if err != nil {
+		t.Fatalf("Unable to parse response from server %q into slice of Player, '%v'", body, err)
+	}
 
-		return
+	return league
 }
 
 func assertLeague(t testing.TB, got, wanted []Player) {
