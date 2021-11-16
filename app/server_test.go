@@ -8,8 +8,6 @@ import (
 	"testing"
 )
 
-
-
 func TestStoreWins(t *testing.T) {
 	store := StubPlayerStore{
 		map[string]int{},
@@ -29,7 +27,6 @@ func TestStoreWins(t *testing.T) {
 		AssertStatus(t, response.Code, http.StatusAccepted)
 		AssertPlayerWin(t, &store, player)
 
-		
 	})
 }
 
@@ -117,7 +114,6 @@ func getLeagueFromResponse(t testing.TB, body io.Reader) (league League) {
 	return league
 }
 
-
 func newLeagueRequest() *http.Request {
 	req, _ := http.NewRequest(http.MethodGet, "/league", nil)
 	return req
@@ -127,4 +123,3 @@ func newGetScoreRequest(name string) *http.Request {
 	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/players/%s", name), nil)
 	return req
 }
-

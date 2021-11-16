@@ -1,15 +1,15 @@
 package poker
 
 import (
-	"os"
-	"sort"
 	"encoding/json"
 	"fmt"
+	"os"
+	"sort"
 )
 
 type FileSystemPlayerStore struct {
 	database *json.Encoder
-	league League
+	league   League
 }
 
 func FileSystemPlayerStoreFromFile(path string) (*FileSystemPlayerStore, func(), error) {
@@ -52,8 +52,8 @@ func NewFileSystemPlayerStore(database *os.File) (*FileSystemPlayerStore, error)
 	}
 
 	return &FileSystemPlayerStore{
-		database:json.NewEncoder(&tape{database}),
-		league:league,
+		database: json.NewEncoder(&tape{database}),
+		league:   league,
 	}, nil
 }
 

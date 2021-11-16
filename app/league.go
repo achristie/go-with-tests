@@ -1,9 +1,9 @@
 package poker
 
 import (
-	"io"
 	"encoding/json"
 	"fmt"
+	"io"
 )
 
 type League []Player

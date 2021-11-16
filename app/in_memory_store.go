@@ -24,4 +24,3 @@ func (i *InMemoryPlayerStore) GetLeague() League {
 
 	return league
 }
-

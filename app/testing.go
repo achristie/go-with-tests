@@ -1,8 +1,10 @@
 package poker
 
 import (
-	"testing"
+	"fmt"
 	"reflect"
+	"testing"
+	"time"
 )
 
 type StubPlayerStore struct {
@@ -24,17 +26,33 @@ func (s *StubPlayerStore) GetLeague() League {
 	return s.league
 }
 
+type ScheduledAlert struct {
+	At     time.Duration
+	Amount int
+}
+
+func (s ScheduledAlert) String() string {
+	return fmt.Sprintf("%d chips at %v", s.Amount, s.At)
+}
+
+type SpyBlindAlerter struct {
+	Alerts []ScheduledAlert
+}
+
+func (s *SpyBlindAlerter) ScheduleAlertAt(at time.Duration, amount int) {
+	s.Alerts = append(s.Alerts, ScheduledAlert{at, amount})
+}
 
 func AssertPlayerWin(t testing.TB, store *StubPlayerStore, winner string) {
 	t.Helper()
 
-		if len(store.winCalls) != 1 {
-			t.Errorf("got %d calls to RecordWin want %d", len(store.winCalls), 1)
-		}
+	if len(store.winCalls) != 1 {
+		t.Errorf("got %d calls to RecordWin want %d", len(store.winCalls), 1)
+	}
 
-		if store.winCalls[0] != winner {
-			t.Errorf("did not store the correct winner, got %q want %q", store.winCalls[0], winner)
-}
+	if store.winCalls[0] != winner {
+		t.Errorf("did not store the correct winner, got %q want %q", store.winCalls[0], winner)
+	}
 }
 
 func AssertLeague(t testing.TB, got, wanted League) {
@@ -61,7 +79,7 @@ func AssertStatus(t testing.TB, got, want int) {
 func AssertScoreEquals(t testing.TB, got, want int) {
 	t.Helper()
 	if got != want {
-			t.Errorf("got %d want %d", got, want)
+		t.Errorf("got %d want %d", got, want)
 	}
 }
 func AssertNoError(t testing.TB, err error) {
