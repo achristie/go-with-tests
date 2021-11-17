@@ -2,15 +2,15 @@ package poker_test
 
 import (
 	"bytes"
-	"github.com/achristie/go-with-tests/app"
 	"io"
 	"strings"
 	"testing"
+
+	poker "github.com/achristie/go-with-tests/app"
 )
 
 var dummyBlindAlerter = &poker.SpyBlindAlerter{}
 var dummyPlayerStore = &poker.StubPlayerStore{}
-var dummyStdIn = &bytes.Buffer{}
 var dummyStdOut = &bytes.Buffer{}
 
 type GameSpy struct {
@@ -18,7 +18,7 @@ type GameSpy struct {
 	FinishCalledWith string
 }
 
-func (g *GameSpy) Start(numberOfPlayers int) {
+func (g *GameSpy) Start(numberOfPlayers int, alertsDestination io.Writer) {
 	g.StartCalledWith = numberOfPlayers
 }
 
@@ -37,7 +37,7 @@ func TestCLI(t *testing.T) {
 		game := &GameSpy{}
 
 		cli := poker.NewCLI(in, stdout, game)
-		cli.PlayPoker()
+		cli.PlayPoker(stdout)
 
 		got := stdout.String()
 		want := "Please enter the number of players: "
@@ -55,7 +55,7 @@ func TestCLI(t *testing.T) {
 		game := &GameSpy{}
 
 		cli := poker.NewCLI(in, dummyStdOut, game)
-		cli.PlayPoker()
+		cli.PlayPoker(dummyStdOut)
 
 		if game.FinishCalledWith != "Chris" {
 			t.Errorf("expected finish called with 'Chris' but got %q", game.FinishCalledWith)
@@ -66,7 +66,7 @@ func TestCLI(t *testing.T) {
 		game := &GameSpy{}
 
 		cli := poker.NewCLI(in, dummyStdOut, game)
-		cli.PlayPoker()
+		cli.PlayPoker(dummyStdOut)
 
 		if game.FinishCalledWith != "Kelsey" {
 			t.Errorf("expected finish called with 'Kelsey' but got %q", game.FinishCalledWith)
@@ -78,7 +78,7 @@ func TestCLI(t *testing.T) {
 		game := &GameSpy{}
 
 		cli := poker.NewCLI(in, stdout, game)
-		cli.PlayPoker()
+		cli.PlayPoker(dummyStdOut)
 
 		if game.StartCalledWith > 0 {
 			t.Errorf("game should not have started")
@@ -94,5 +94,19 @@ func assertScheduledAlert(t testing.TB, got, want poker.ScheduledAlert) {
 
 	if got.At != want.At {
 		t.Errorf("got scheduled time of %v, want %v", got.At, want.At)
+	}
+}
+
+func assertGameStartedWith(t testing.TB, game *GameSpy, numberOfPlayersWanted int) {
+	t.Helper()
+	if game.StartCalledWith != numberOfPlayersWanted {
+		t.Errorf("wanted Start called with %d but got %d", numberOfPlayersWanted, game.StartCalledWith)
+	}
+}
+
+func assertFinishCalledWith(t testing.TB, game *GameSpy, winner string) {
+	t.Helper()
+	if game.FinishCalledWith != winner {
+		t.Errorf("expected finish called with %q but got %q", winner, game.FinishCalledWith)
 	}
 }
