@@ -27,13 +27,13 @@ func NewCLI(in io.Reader, out io.Writer, game Game) *CLI {
 	}
 }
 
-func (cli *CLI) PlayPoker(to io.Writer) {
+func (cli *CLI) PlayPoker() {
 	fmt.Fprint(cli.out, "Please enter the number of players: ")
 
 	numberOfPlayersInput := cli.readLine()
 	numberOfPlayers, _ := strconv.Atoi(strings.Trim(numberOfPlayersInput, "\n"))
 
-	cli.game.Start(numberOfPlayers, to)
+	cli.game.Start(numberOfPlayers, cli.out)
 
 	winnerInput := cli.readLine()
 	winner := extractWinner(winnerInput)

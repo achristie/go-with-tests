@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/achristie/go-with-tests/app"
 	"log"
 	"os"
+
+	poker "github.com/achristie/go-with-tests/app"
 )
 
 const dbFileName = "game.db.json"
@@ -17,7 +18,7 @@ func main() {
 	}
 	defer closeFunc()
 
-	game := poker.NewHoldem(poker.BlindAlerterFunc(poker.StdOutAlerter), db)
+	game := poker.NewHoldem(poker.BlindAlerterFunc(poker.Alerter), db)
 	cli := poker.NewCLI(os.Stdin, os.Stdout, game)
 
 	fmt.Println("let's play poker!")
