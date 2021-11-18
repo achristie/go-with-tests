@@ -28,21 +28,22 @@ func TestGame(t *testing.T) {
 		poker.AssertStatus(t, response.Code, http.StatusOK)
 	})
 	t.Run("start a game with 3 playres and declare Andy the winner", func(t *testing.T) {
+		game := &GameSpy{}
 		winner := "Andy"
-		server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, dummyGame))
-		defer server.Close()
+		server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
 
 		wsURL := "ws" + strings.TrimPrefix(server.URL, "http") + "/ws"
-
 		ws := mustDialWS(t, wsURL)
+
 		defer ws.Close()
+		defer server.Close()
 
 		writeWSMessage(t, ws, "3")
 		writeWSMessage(t, ws, winner)
 
-		time.Sleep(10 * time.Millisecond)
-		assertGameStartedWith(t, dummyGame, 3)
-		assertFinishCalledWith(t, dummyGame, winner)
+		time.Sleep(444 * time.Millisecond)
+		assertGameStartedWith(t, game, 3)
+		assertFinishCalledWith(t, game, winner)
 	})
 }
 
